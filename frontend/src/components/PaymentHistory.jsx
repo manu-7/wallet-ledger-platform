@@ -1,3 +1,5 @@
+import { History, ArrowUpRight, ArrowDownLeft } from "lucide-react";
+
 function shortId(id) {
   return id ? id.slice(0, 8) : "";
 }
@@ -21,76 +23,66 @@ function formatDate(iso) {
 
 export default function PaymentHistory({ entries, loading }) {
   return (
-    <div>
-      <div className="flex items-baseline justify-between mb-4">
-        <h2 className="text-sm font-medium text-ink-soft uppercase tracking-wide">
-          Payment history
-        </h2>
-        <span className="text-[11px] text-border-strong">All time</span>
+    <div className="bg-surface border border-border rounded-xl p-6 shadow-card">
+      <div className="flex items-center gap-2 mb-5">
+        <div className="w-7 h-7 rounded-lg bg-app text-ink-soft flex items-center justify-center">
+          <History size={13} />
+        </div>
+        <h2 className="text-sm font-semibold">Payment history</h2>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm border-collapse min-w-[560px]">
-          <thead>
-            <tr>
-              {["Transaction", "Note", "Type", "Amount", "Date"].map((h) => (
-                <th
-                  key={h}
-                  className="text-left font-medium text-ink-soft text-xs pb-2 border-b border-border-strong whitespace-nowrap"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {loading && (
-              <tr>
-                <td colSpan={5} className="text-ink-soft py-4 text-sm">
-                  Loading…
-                </td>
-              </tr>
-            )}
-            {!loading && entries.length === 0 && (
-              <tr>
-                <td colSpan={5} className="text-ink-soft py-4 text-sm">
-                  No transactions yet.
-                </td>
-              </tr>
-            )}
-            {entries.map((entry) => {
-              const isDebit = entry.entry_type === "DEBIT";
-              return (
-                <tr key={entry.id} className="border-b border-border">
-                  <td className="py-2.5 font-mono text-[11px] text-border-strong whitespace-nowrap">
-                    {shortId(entry.transaction_id)}…
-                  </td>
-                  <td className="py-2.5">{entry.description || "—"}</td>
-                  <td className="py-2.5">
-                    <span
-                      className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${
-                        isDebit ? "bg-debit-soft text-debit" : "bg-credit-soft text-credit"
-                      }`}
-                    >
-                      {isDebit ? "Sent" : "Received"}
-                    </span>
-                  </td>
-                  <td
-                    className={`py-2.5 font-mono tabular whitespace-nowrap ${
-                      isDebit ? "text-debit" : "text-credit"
-                    }`}
-                  >
-                    {isDebit ? "−" : "+"}₹{formatMoney(entry.amount)}
-                  </td>
-                  <td className="py-2.5 font-mono text-[11px] text-border-strong whitespace-nowrap">
-                    {formatDate(entry.created_at)}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      {loading && <p className="text-ink-soft text-sm py-6 text-center">Loading…</p>}
+
+      {!loading && entries.length === 0 && (
+        <div className="text-center py-10">
+          <p className="text-sm text-ink-soft">No transactions yet.</p>
+        </div>
+      )}
+
+      {!loading && entries.length > 0 && (
+        <div className="overflow-x-auto -mx-2">
+          <table className="w-full text-sm border-collapse min-w-[540px]">
+            <tbody>
+              {entries.map((entry) => {
+                const isDebit = entry.entry_type === "DEBIT";
+                return (
+                  <tr key={entry.id} className="border-b border-border last:border-0">
+                    <td className="py-3 px-2 w-10">
+                      <div
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                          isDebit ? "bg-debit-soft text-debit" : "bg-credit-soft text-credit"
+                        }`}
+                      >
+                        {isDebit ? <ArrowUpRight size={14} /> : <ArrowDownLeft size={14} />}
+                      </div>
+                    </td>
+                    <td className="py-3 px-2">
+                      <p className="font-medium text-[13px]">
+                        {isDebit ? "Sent" : "Received"}
+                      </p>
+                      <p className="text-[11px] text-ink-faint">
+                        {entry.description || "No note"}
+                      </p>
+                    </td>
+                    <td className="py-3 px-2 text-right">
+                      <p
+                        className={`font-mono tabular text-sm font-medium ${
+                          isDebit ? "text-debit" : "text-credit"
+                        }`}
+                      >
+                        {isDebit ? "−" : "+"}₹{formatMoney(entry.amount)}
+                      </p>
+                      <p className="text-[11px] text-ink-faint font-mono">
+                        {formatDate(entry.created_at)}
+                      </p>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

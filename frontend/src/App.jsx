@@ -19,8 +19,7 @@ export default function App() {
     if (!accessToken) return;
     setLoadingAccounts(true);
     try {
-      const data = await apiRequest("/accounts/", { token: accessToken });
-      setAccounts(data);
+      setAccounts(await apiRequest("/accounts/", { token: accessToken }));
     } catch (err) {
       showToast(err.message, true);
     } finally {
@@ -32,8 +31,7 @@ export default function App() {
     if (!accessToken) return;
     setLoadingHistory(true);
     try {
-      const data = await apiRequest("/transactions/history", { token: accessToken });
-      setHistory(data);
+      setHistory(await apiRequest("/transactions/history", { token: accessToken }));
     } catch (err) {
       showToast(err.message, true);
     } finally {
@@ -93,7 +91,7 @@ export default function App() {
   if (!accessToken) return <AuthScreen />;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-app">
       <TopBar />
       <div className="flex flex-col md:flex-row flex-1">
         <AccountsPanel
@@ -102,7 +100,7 @@ export default function App() {
           onCreateAccount={handleCreateAccount}
           onDeposit={handleDeposit}
         />
-        <main className="flex-1 px-4 sm:px-6 md:px-8 py-6 flex flex-col gap-10 min-w-0">
+        <main className="flex-1 px-4 sm:px-6 md:px-8 py-6 flex flex-col gap-6 min-w-0">
           <TransferForm
             accounts={accounts}
             onTransfer={handleTransfer}
@@ -114,8 +112,8 @@ export default function App() {
 
       {toast && (
         <div
-          className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded text-sm text-white ${
-            toast.isError ? "bg-debit" : "bg-ink"
+          className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 rounded-lg text-sm text-white shadow-elevated ${
+            toast.isError ? "bg-debit" : "bg-accent"
           }`}
         >
           {toast.message}

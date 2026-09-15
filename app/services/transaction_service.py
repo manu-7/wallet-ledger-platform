@@ -132,7 +132,6 @@ async def deposit_funds(
     """
     from app.services.system_accounts import get_or_create_system_funding_account
 
-    # --- Idempotency check ---
     existing = await db.execute(
         select(Transaction).where(Transaction.idempotency_key == idempotency_key)
     )
@@ -142,7 +141,6 @@ async def deposit_funds(
 
     funding_account = await get_or_create_system_funding_account(db)
 
-    # --- Row-level locking (same consistent-order pattern as transfers) ---
     account_ids_in_order = sorted([funding_account.id, to_account_id], key=str)
     result = await db.execute(
         select(Account).where(Account.id.in_(account_ids_in_order)).with_for_update()
@@ -155,14 +153,12 @@ async def deposit_funds(
     if to_account is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found.")
 
-    # --- Authorization: caller must own the account being funded ---
     if to_account.user_id != requesting_user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You do not have permission to deposit into this account.",
         )
 
-    # --- Create transaction + paired ledger entries ---
     transaction = Transaction(
         idempotency_key=idempotency_key, description=description or "Deposit"
     )
@@ -184,10 +180,6 @@ async def deposit_funds(
     db.add_all([debit_entry, credit_entry])
 
     to_account.balance_cache += amount
-    # The system funding account's balance_cache is allowed to go negative
-    # by design — it represents money entering the ledger from outside,
-    # not a real bounded balance. Its true "balance" is meaningless; only
-    # the ledger entries matter for reconciliation.
     funding_account.balance_cache -= amount
 
     try:

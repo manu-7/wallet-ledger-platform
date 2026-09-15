@@ -36,11 +36,6 @@ async def get_transaction_history(
     db: AsyncSession = Depends(get_db),
     limit: int = 50,
 ):
-    """Returns every ledger entry (debit or credit) touching any account
-    the current user owns, newest first. This is what powers a real
-    'Payment History' view — persisted, not just what happened this
-    browser session.
-    """
     result = await db.execute(
         select(LedgerEntry, Transaction.description, Transaction.idempotency_key)
         .join(Transaction, LedgerEntry.transaction_id == Transaction.id)

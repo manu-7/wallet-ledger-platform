@@ -18,7 +18,6 @@ celery_app.conf.update(
     enable_utc=True,
 )
 
-# Runs the ledger reconciliation check every 5 minutes.
 celery_app.conf.beat_schedule = {
     "run-ledger-reconciliation": {
         "task": "app.tasks.reconciliation_tasks.run_reconciliation",

@@ -37,8 +37,7 @@ async def deposit(
 ):
     """Adds funds to an account from the system funding source. Stays
     double-entry: this writes a DEBIT against the system account and a
-    CREDIT against the user's account, same as any other transfer —
-    it is never a bare balance increment.
+    CREDIT against the user's account, never a bare balance increment.
     """
     return await deposit_funds(
         db=db,

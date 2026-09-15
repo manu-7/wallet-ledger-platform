@@ -24,4 +24,3 @@ class LedgerEntryWithNoteOut(LedgerEntryOut):
 
     description: str | None = None
     idempotency_key: str
-

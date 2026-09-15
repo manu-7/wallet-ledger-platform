@@ -5,8 +5,6 @@ from outside stays double-entry: a deposit is a transfer FROM this account
 TO the user's account, never a bare balance increment.
 """
 
-import uuid
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,8 +19,6 @@ async def get_or_create_system_funding_account(db: AsyncSession) -> Account:
     system_user = result.scalar_one_or_none()
 
     if system_user is None:
-        # Placeholder hash — this user can never log in (no real password
-        # was ever set), it exists purely to own the system account.
         system_user = User(email=SYSTEM_USER_EMAIL, password_hash="!disabled!")
         db.add(system_user)
         await db.flush()
