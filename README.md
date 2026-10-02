@@ -4,6 +4,12 @@ A backend system for managing user wallets through a proper **double-entry ledge
 
 Instead of storing a mutable `balance` field, every money movement writes an immutable pair of ledger entries — one debit, one credit. A wallet's balance is always *derived* from its ledger, making the system self-verifying and auditable by design.
 
+## Architecture
+
+![Architecture diagram](diagram.png)
+
+*Generated with [gitdiagram.com](https://gitdiagram.com/manu-7/wallet-ledger-platform)*
+
 ## Core features
 
 - **Double-entry ledger** — append-only `ledger_entries` table; balances are cached for fast reads but never trusted as source of truth
@@ -69,7 +75,7 @@ Then:
 ```bash
 pytest -v
 ```
-Covers signup/login, account ownership/authorization, transfer correctness, insufficient-balance rejection, and — critically — that replaying an identical request with the same idempotency key never moves money twice. Tests also run automatically on every push via GitHub Actions.
+Covers signup/login, account ownership/authorization, transfer correctness, insufficient-balance rejection, and — critically — that replaying an identical request with the same idempotency key never moves money twice.
 
 ## Running with Docker
 
@@ -88,4 +94,4 @@ Celery requires an always-on worker process, which most free-tier hosting platfo
 
 ## Status
 
-Core schema, auth, idempotent + concurrency-safe transfers, deposits, Redis caching, transaction history, Celery reconciliation, automated tests, CI, and a production Docker setup are complete.
+Core schema, auth, idempotent + concurrency-safe transfers, deposits, Redis caching, transaction history, Celery reconciliation, and automated tests are complete. CI pipeline is planned next.production Docker setup are complete.
