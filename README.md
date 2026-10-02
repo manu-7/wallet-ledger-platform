@@ -6,7 +6,8 @@ Instead of storing a mutable `balance` field, every money movement writes an imm
 
 ## Architecture
 
-![Architecture diagram](diagram.png)
+![Architecture diagram](<img width="7564" height="9942" alt="diagram (1)" src="https://github.com/user-attachments/assets/5a513d8c-224d-4ab0-bfb1-a9e7f638865e" />
+diagram.png)
 
 *Generated with [gitdiagram.com](https://gitdiagram.com/manu-7/wallet-ledger-platform)*
 
